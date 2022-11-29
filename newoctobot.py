@@ -65,8 +65,55 @@ async def on_command_error(ctx, error):
 
 
 #---owner commands---#
-#your not supposed to see that ;)
+@client.command()
+@commands.is_owner()
+async def restart(ctx):
+    await ctx.channel.send("restarting...")
+    time.sleep(1)
+    restart_program()
 
+@client.command()
+@commands.is_owner()
+async def stop(ctx):
+    await ctx.channel.send("shutting down...")
+    time.sleep(1)
+    exit(0)
+
+@client.command()
+@commands.is_owner()
+async def info(ctx):
+    embed = discord.Embed(color=discord.Color.green())
+    embed.set_author(name='information about the bot')
+    embed.add_field(name='botname: ', value=client.user.name, inline=False)
+    embed.add_field(name='botID: ', value=str(client.user.id), inline=False)
+    embed.add_field(name='connected with:\n', value=str("\n".join(guild.name for guild in client.guilds)), inline=True)
+    embed.add_field(name='IDs:\n', value=str("\n".join([str(guild.id) for guild in client.guilds])), inline=True)
+    await ctx.author.send(embed=embed)
+
+@client.command()
+@commands.is_owner()
+async def ownerhelp(ctx):
+    embed = discord.Embed(color=discord.Color.blue())
+    embed.set_author(name="i see you need help...")
+
+    file = open('ownerhelp.txt', 'r')
+    ownerhelp = file.readlines()
+
+    embed.add_field(name="here's what you (as the owner) can do:", value=listToString(ownerhelp), inline=False)
+    
+    await ctx.author.send(embed=embed)
+
+@client.command()
+@commands.is_owner()
+async def leave(ctx, serverID : int):
+    toleave = client.get_guild(serverID)
+    await ctx.author.send(f"i left the server with the id: " + str(serverID))
+    await discord.Guild.leave(toleave)
+
+@client.command()
+@commands.is_owner()
+async def invite(ctx):
+    await ctx.author.send(f"invite link https://discord.com/api/oauth2/authorize?client_id=1045966904235397130&permissions=8&scope=bot")
 
 #---user commands---#
 
@@ -108,7 +155,7 @@ async def uptime(ctx):
     seconds = elapsed.seconds
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
-    await ctx.channel.send(f"{ctx.author.mention} i've been awake since {0}d {1}h {2}m {3}s".format(elapsed.days, hours, minutes, seconds))
+    await ctx.channel.send(f"{ctx.author.mention} i've been awake since {elapsed.days}d {hours}h {minutes}m {seconds}s")
 #general - end#
 
 #games/fun - begin#
@@ -383,7 +430,7 @@ async def slash_uptime(ctx):
     seconds = elapsed.seconds
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
-    await ctx.respond(f"i've been awake since {0}d {1}h {2}m {3}s".format(elapsed.days, hours, minutes, seconds))
+    await ctx.respond(f"i've been awake since {elapsed.days}d {hours}h {minutes}m {seconds}s")
 #general - end#
 
 #games/fun - begin#
